@@ -8,6 +8,12 @@ def waveGuide (alpha, largo):
 
 	return largo*alpha/100
 
+def lluvia (alpha, largo):
+	# alpha: pérdidas/100 metros (dB/Km)
+	# largo: longitud de la guía de onda (Km)
+
+	return largo*alpha
+
 def passiveRepeter (f, d1, d2):
 	# f : frecuencia de la señal en GHz
 	# d1, d2 : distancias hasta y desde la repetidora en Km
@@ -16,7 +22,6 @@ def passiveRepeter (f, d1, d2):
 	print("\n")
 
 	d = math.sqrt(d1*d2)
-	print(d)
 	return 2*(92.45 + 20*math.log10(f)+20*math.log10(d))
 
 
