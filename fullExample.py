@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import RadiocomLib
 from RadiocomLib import *
+from printColors import printHeader, printSubHeader, printWarning, printOK, printFail
 
 #------------------------------------------------
 # topographic profile
@@ -34,7 +35,11 @@ d1 = 2.6
 # distancia desde la repetidora al final
 d2 = dt-d1
 # potencia de transmisión
-pt = 20
+Ptx = utils.dBm2dB(20)
+# potencia máxima de recepción
+Prx_max = utils.dBm2dB(-25)
+# sensibilidad del receptor
+Srx = utils.dBm2dB(-76)
 # pérdidas en brach dB/estación
 lb = 2 
 # altura de la torre emisora
@@ -43,13 +48,12 @@ t1 = 90
 tr1 = 0
 # altura de la torre receptora
 t2 = 90
-# frequency
-f = 7 # GHz
+# frecuencia en GHz
+f = 7
 # índice troposférico
 k = 0.4
 # pérdidas por 100 metros de guía de onda
 alpha = 2.4
-
 
 p = profile.calcProfileFullCorrection(d, A, k)
 # p1 = profile.calcProfileEarthCorrection(d, A)
@@ -63,6 +67,18 @@ lg2 = losses.waveGuide(alpha, t2)
 # print(ls1)
 lr1 = losses.passiveRepeter(f, d1, d2)
 
+lt = lg1 + lg2 + lr1
+Prx = Ptx - lt
+
+
+printHeader("Balance de Pontecia: ")
+printSubHeader("\tPerdidas: ")
+print("\t\tTotal: "+ str(lt))
+print("\t\tWave Guide: "+ str(lg1+lg2))
+print("\t\tPassive Repeter: "+ str(lr1))
+printSubHeader("\tPotencia: ")
+print("\t\tTX: "+str(Ptx))
+print("\t\tRX: "+str(Prx) + " MAX: "+str(Prx_max) + " SENSIBILIDAD: " + str(Srx))
 
 
 # OJO!!! siempre dejar esto al final para que no se cierren los gráficos

@@ -1,11 +1,12 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+from printColors import printWarning, printFail, printHeader
 import sys
 
 def plotProfileCSV(csv, k):
 
 	if (k < 0):
-		print("K debe ser mayor que 0")
+		printFail("K debe ser mayor que 0")
 		sys.exit()
 
 	# load data
@@ -129,10 +130,10 @@ def plotProfileCSV(csv, k):
 # regresa la nueva elevación tomando en cuenta sólo la corrección de la curvatura de la tierra
 def calcProfileEarthCorrection(distance, elevation):
 	if (len(distance) > len(elevation)):
-		print("distancie[] tiene más elementos que elevation[]")
+		printFail("distancie[] tiene más elementos que elevation[]")
 		sys.exit()
 	elif (len(distance) < len(elevation)):
-		print("elevation[] tiene más elementos que distance[]")
+		printFail("elevation[] tiene más elementos que distance[]")
 		sys.exit()
 
 	# curvaturas por perturbación terrestre
@@ -142,7 +143,7 @@ def calcProfileEarthCorrection(distance, elevation):
 	
 	[final_elevation.append(x + y) for x, y in zip(elevation, protuberancia1)]
 
-	print("Distance, Elevation")
+	printHeader("Distance, Elevation")
 	[print(str(d) + " , " + str(A)) for d, A in zip(distance, final_elevation)]
 	print("\n")
 	# return (final_elevation, protuberancia1)   # por si las moscas se necesita el valor de la protuberancia
@@ -151,10 +152,10 @@ def calcProfileEarthCorrection(distance, elevation):
 # regresa la nueva elevación tomando en cuenta sólo la corrección de la refracción ambiental
 def calProfileRefractionCorrection(distance, elevation, k):
 	if (len(distance) > len(elevation)):
-		print("distancie[] tiene más elementos que elevation[]")
+		printFail("distancie[] tiene más elementos que elevation[]")
 		sys.exit()
 	elif (len(distance) < len(elevation)):
-		print("elevation[] tiene más elementos que distance[]")
+		printFail("elevation[] tiene más elementos que distance[]")
 		sys.exit()
 
 	# curvaturas por difracción
@@ -164,7 +165,7 @@ def calProfileRefractionCorrection(distance, elevation, k):
 	
 	[final_elevation.append(x + y) for x, y in zip(elevation, protuberancia)]
 
-	print("Distance, Elevation")
+	printHeader("Distance, Elevation")
 	[print(str(d) + " , " + str(A)) for d, A in zip(distance, final_elevation)]
 	print("\n")
 	# return (final_elevation, protuberancia)   # por si las moscas se necesita el valor de la protuberancia
@@ -172,10 +173,10 @@ def calProfileRefractionCorrection(distance, elevation, k):
 
 def calcProfileFullCorrection(distance, elevation, k):
 	if (len(distance) > len(elevation)):
-		print("distancie[] tiene más elementos que elevation[]")
+		printFail("distancie[] tiene más elementos que elevation[]")
 		sys.exit()
 	elif (len(distance) < len(elevation)):
-		print("elevation[] tiene más elementos que distance[]")
+		printFail("elevation[] tiene más elementos que distance[]")
 		sys.exit()
 
 	# curvaturas por difracción
@@ -188,7 +189,7 @@ def calcProfileFullCorrection(distance, elevation, k):
 	
 	[final_elevation.append(x + y) for x, y in zip(elevation, protuberancia)]
 
-	print("Distance, Elevation")
+	printHeader("Distance, Elevation")
 	[print(str(d) + " , " + str(A)) for d, A in zip(distance, final_elevation)]
 	print("\n")
 
@@ -213,22 +214,6 @@ def plotProfileArrays(n, distance, elevation, title=""):
 
 def plotShow():
 	plt.show()
-
-def m2Km(values):
-	distance_ = []
-	# convert from m to Km
-	for i in range(0, len(values)):
-		distance_.append(values[i]/1000)
-
-	return distance_
-
-def Km2m(values):
-	distance_ = []
-	# convert from Km to m
-	for i in range(0, len(values)):
-		distance_.append(values[i]*1000)
-
-	return distance_
 
 def B_k(distance, k):
 	b_k = []

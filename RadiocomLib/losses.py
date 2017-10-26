@@ -1,4 +1,6 @@
 import math
+from printColors import printWarning, printFail, printHeader
+
 
 def waveGuide (alpha, largo):
 	# alpha: pérdidas/100 metros (dB/m)
@@ -9,8 +11,9 @@ def waveGuide (alpha, largo):
 def passiveRepeter (f, d1, d2):
 	# f : frecuencia de la señal en GHz
 	# d1, d2 : distancias hasta y desde la repetidora en Km
-	print("PassiveRepeater: remember that frequency must be in GHz")
-	print("PassiveRepeater: remember that distances must be in Km")
+	printWarning("PassiveRepeater: remember that frequency must be in GHz")
+	printWarning("PassiveRepeater: remember that distances must be in Km")
+	print("\n")
 
 	d = math.sqrt(d1*d2)
 	return 2*(92.45 + 20*math.log10(f)+20*math.log10(d))
