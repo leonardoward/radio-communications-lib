@@ -187,7 +187,7 @@ def calcProfileFullCorrection(distance, elevation, k):
 
 	final_elevation = []
 	
-	[final_elevation.append(x + y) for x, y in zip(elevation, protuberancia)]
+	[final_elevation.append(x + y + z) for x, y, z in zip(elevation, protuberancia, protuberancia1)]
 
 	printHeader("Distance, Elevation")
 	[print(str(d) + " , " + str(A)) for d, A in zip(distance, final_elevation)]
@@ -195,6 +195,36 @@ def calcProfileFullCorrection(distance, elevation, k):
 
 	# corrección, protuberancia por difracción, protuberancia por curvatura de la tierra
 	# return (final_elevation, protuberancia, protuberancia1)   # por si las moscas se necesita el valor de la protuberancia
+	return final_elevation
+
+
+def calcSimpleProfileFullCorrection(distance, d1, elevation, k):
+	# distance : arreglo con todas las distancias Km
+	# d1 : distancia a la que está la repetidora
+	# elevation : elevaciones en m
+	# k : indice troposferico
+
+	# curvaturas por perturbación terrestre
+	protuberancia1 = B_e(distance)
+
+	# curvaturas por difracción
+	b_k = []
+	for x in distance:
+		if (x <= d1): 
+			# print(x)
+			b_k.append(0.07849*x*(d1 - x)/k)
+		elif (x > d1):
+			# print(x)
+			b_k.append(0.07849*x*(distance[-1] - x)/k)		
+
+	final_elevation = []
+
+	[final_elevation.append(x + y + z) for x, y, z in zip(elevation, protuberancia1, b_k)]
+
+	printHeader("Distance, Elevation")
+	[print(str(d) + " , " + str(A)) for d, A in zip(distance, final_elevation)]
+	print("\n")
+
 	return final_elevation
 
 def plotProfileArrays(n, distance, elevation, title=""):

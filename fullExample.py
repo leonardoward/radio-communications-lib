@@ -66,12 +66,13 @@ alpha = 2.4
 # Ganancia de la antena dBi
 G = 31
 
-p = profile.calcProfileFullCorrection(d, A, k)
-# p1 = profile.calcProfileEarthCorrection(d, A)
-# p2 = profile.calProfileRefractionCorrection(d, A, k)
+# p = profile.calcProfileFullCorrection(d, A, k)
+p1 = profile.calcSimpleProfileFullCorrection(d, d1, A, k)
+# p2 = profile.calcProfileEarthCorrection(d, A)
+# p3 = profile.calProfileRefractionCorrection(d, A, k)
 
-# profile.plotProfileArrays(2, d, A, title="Earth")
-# profile.plotProfileArrays(3, d, p, title="Corrections")
+profile.plotProfileArrays(2, d, A, title="Earth")
+profile.plotProfileArrays(3, d, p1, title="Corrections")
 
 # perdidas por guía de onda
 
@@ -139,7 +140,7 @@ printSubHeader("\tPotencia: ")
 print("\t\tGanancia totales: "+str(Gt) + " dB")
 print("\t\tTx: "+str(Ptx) + " dB")
 print("\t\tRx: "+str(Prx) + "\t\tMAX: "+str(Prx_max) + "\tSENSIBILIDAD: " + str(Srx) + " dB")
-
+print("\n\n")
 
 # OJO!!! siempre dejar esto al final para que no se cierren los gráficos
 # no importa si no estás graficando
