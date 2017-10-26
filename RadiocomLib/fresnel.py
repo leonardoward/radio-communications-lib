@@ -3,80 +3,96 @@ import matplotlib.pyplot as plt
 
 def fresnelRadius(n, d1, d2, f):
     # Rn = radio de la n-sima zona de fresnel (m)
-    # f  = frecuencia (Hz)
-    # d1 = distancia del transmisor al plano considerado (m)
-    # d2 = distancia del plano considerado al receptor (m)
-    f = f/1000000   # Hz -> MHz
-    d1 = d1/1000    # m -> Km
-    d2 = d2/1000    # m -> Km
+    # f  = frecuencia (MHz)
+    # d1 = distancia del transmisor al plano considerado (Km)
+    # d2 = distancia del plano considerado al receptor (Km)
     Rn = 548*math.sqrt((n*d1*d2)/(f*(d1+d2)))
     return Rn
 
-def hazEntreAntenas(pyBaseAntena1, hAntena1,
-                    pyBaseAntena2, hAntena2,
-                    distEntreAntenas):
-
+def hazEntreAntenas(pxBaseAntena1, pyBaseAntena1, hAntena1,
+                    pxBaseAntena2, pyBaseAntena2, hAntena2):
+    # pxBaseAntena1 -> km
+    # pxBaseAntena2 -> km
+    # pyBaseAntena1 -> m
+    # pyBaseAntena2 -> m
+    # hAntena1 -> m
+    # hAntena2 -> m
     # Ecuación de la recta
-    m = ((pyBaseAntena2+hAntena2) - (pyBaseAntena1+hAntena1))/distEntreAntenas
-    b = (pyBaseAntena1+hAntena1)
-    # print("m = "+str(m))
-    # print("b = "+str(b))
-    hazX = []
-    hazY = []
-    for x in range(distEntreAntenas):
-        newY = m*x + b
-        hazX.append(x)
-        hazY.append(newY)
-    return (hazX,hazY)
+    m = ((pyBaseAntena2+hAntena2) - (pyBaseAntena1+hAntena1))/(pxBaseAntena2-pxBaseAntena1)
+    b = ((pyBaseAntena1+hAntena1) + (pyBaseAntena2+hAntena2) - m*(pxBaseAntena1+pxBaseAntena2))/2
+    return (m,b)
 
-def checkColisionFresnel(hazX, hazY, n, f, pxObstacles, pyObstacles, distEntreAntenas):
-    deltaH = []        # Distancia entre el haz y (obstáculo + radio de fresnel)
-    radioFresnel = []  # Radio de fresnel para cada obstáculo
-    alturaHazObstaculo = [] #Altura del haz sobre el obstáculo
-    for x in range(len(hazX)):
-        for i in range(len(pxObstacles)):
-            if(pxObstacles[i] == x):
-                rFresnel = fresnelRadius(n, x, distEntreAntenas-x, f)
-                radioFresnel.append(rFresnel)
-                alturaHazObstaculo.append(hazY[i])
-                deltaH.append(hazY[i] - (pyObstacles[i] + rFresnel))
-                # print("x = " + str(x))
-                # print("Altura del obstaculo = " + str(pyObstacles[i]))
-                # print("Radio de Fresnel = " + str(rFresnel))
-                # print("Altura del Haz = " + str(hazY[x]))
-                # print("Altura del Haz - (Altura del obstaculo + radio de Fresnel) = " + str(deltaH))
-    return (alturaHazObstaculo, radioFresnel, deltaH)
+def getRayObstacleDifference(m, b, n, f, pxObstacles, pyObstacles, pxBaseAntena1, pxBaseAntena2):
+    # m -> pendiente de la ecuación de la recta del haz
+    # b -> punto de corte del eje Y de la ecuación de la recta del haz [m]
+    # n -> Número de radios de Fresnel
+    # pxObstacles -> Arreglo con los puntos a evaluar del terreno X [Km]
+    # pyObstacles -> Arreglo con los puntos a evaluar del terreno Y [m]
+
+    deltaH = []         # Distancia entre el haz y (obstáculo + radio de fresnel) [m]
+    rFresnelArray = []  # Radio de fresnel para cada obstáculo [m]
+    alturaHazArray = [] # Altura del haz sobre el obstáculo [m]
+    for i in range(len(pxObstacles)):
+        hazArray = m*pxObstacles[i] + b
+        alturaHazArray.append(hazArray)
+        rFresnel = fresnelRadius(n, pxObstacles[i] - pxBaseAntena1, pxBaseAntena2-pxObstacles[i], f)
+        rFresnelArray.append(rFresnel)
+        deltaH.append(hazArray - (pyObstacles[i] + rFresnel))
+    return (alturaHazArray, rFresnelArray, deltaH)
+
+def checkColision(deltaH):
+    result = [] # Arreglo con la detección para cada obstáculo, true/false para indicar si colisiona
+    for i in range(len(deltaH)):
+        if(deltaH[i]<0):
+            result.append(True)
+        else:
+            result.append(False)
+    return result
 
 def test():
-    f = 12770000             # Hz
+    f = 12.770000            # MHz
     # Antenas
-    pxBaseAntena1 = 0        # m
+    pxBaseAntena1 = 0        # Km
     pyBaseAntena1 = 909      # m
-    hAntena1 = 850           # m
+    hAntena1 = 700           # m
 
-    pxBaseAntena2   = 21605  # m
-    pyBaseAntena2   = 185    # m
-    hAntena2 = 850           # m
+    pxBaseAntena2   = 21.605  # Km
+    pyBaseAntena2   = 185     # m
+    hAntena2 = 850            # m
 
     # Obstáculos
-    pxObstacles = [19455, 14556, 7762]             # km
+    d = [0, 0.5, 1, 1.8, 2.3, 2.6, 3, 5, 7, 37, 37.5]
+    A = [25, 75, 100, 210, 250, 170, 125, 20, 0, 0, 25]
+    pxObstacles = [19.455, 14.556, 7.762]          # km
     pyObstacles = [468.75, 893.75, 1053.2]         # m
 
     # Calculo del Haz
 
-    (hazX,hazY) = hazEntreAntenas(pyBaseAntena1, hAntena1,
-                                  pyBaseAntena2,hAntena2,
-                                  pxBaseAntena2-pxBaseAntena1)
+    (m,b) = hazEntreAntenas(pxBaseAntena1, pyBaseAntena1, hAntena1,
+                            pxBaseAntena2, pyBaseAntena2, hAntena2)
 
     # Colisiones entre el haz(incluido fresnel) y los obstáculos
-    (alturaHazObstaculo, radioFresnel, deltaH) = checkColisionFresnel(hazX,
-                                  hazY, 1, f, pxObstacles, pyObstacles,
-                                  pxBaseAntena2-pxBaseAntena1)
+    (alturaHaz, radioFresnel, deltaH) = getRayObstacleDifference(m, b, 1, f,
+                                  pxObstacles, pyObstacles,
+                                  pxBaseAntena1, pxBaseAntena2)
 
-    print("Distancia entre cada obstáculo y el haz (sumando el radio de fresnel al obstáculo)")
-    print(deltaH)
-    plt.plot(hazX, hazY)
-    plt.show()
+    colision = checkColision(deltaH)
+
+    print("X Obstáculos [Km]")
+    print('\t'+str(pxObstacles))
+    print("Y Obstáculos [m]")
+    print('\t'+str(pyObstacles))
+    print("Alturas del Haz sobre los obstáculos [m]")
+    print('\t'+str(alturaHaz))
+    print("Radio de Fresnel sobre cada obstáculo [m]")
+    print('\t'+str(radioFresnel))
+    print("Diferencia entre la altura del haz y la altura del obstáculo (junto con el radio de Fresnel)")
+    print('\t'+str(deltaH))
+    print("Chequeo de colisiones en cada obstáculo")
+    print('\t'+str(colision))
+    for i in range(len(colision)):
+        if(colision[i]):
+            print('\tColisión en X = '+str(pxObstacles[i]) + " Km")
 
 # Datos para calcular el radio de Fresnel
 # f = 12770000

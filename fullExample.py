@@ -45,7 +45,7 @@ Ptx = utils.dBm2dB(20)
 # potencia máxima de recepcion dB
 Prx_max = utils.dBm2dB(-25)
 # sensibilidad del receptor DB
-Srx = utils.dBm2dB(-76) 
+Srx = utils.dBm2dB(-76)
 # pérdidas en brach dB/estación
 lb = 2
 # altura de la torre emisora
@@ -92,6 +92,41 @@ Pr1 = power.powerReceive(lambda_Km, Ptx, G, G, d1)
 Gt = G + G + G + G
 Lt = lg1 + lg2 + lr1 + 2*lb + ll
 Prx = Ptx + Gt - Lt
+
+# Cálculo de Fresnel
+
+pxBaseAntena1 = d[0]         # Km
+pyBaseAntena1 = A[0]         # m
+hAntena1 = h_t1                # m
+
+pxBaseAntena2   = d[len(d)-1]   # Km
+pyBaseAntena2   = A[len(A)-1]   # m
+hAntena2 = h_t2                   # m
+
+# Calculo del Haz
+(m,b) = fresnel.hazEntreAntenas(pxBaseAntena1, pyBaseAntena1, hAntena1,
+                        pxBaseAntena2, pyBaseAntena2, hAntena2)
+
+# Colisiones entre el haz(incluido fresnel) y los obstáculos
+(alturaHaz, radioFresnel, deltaH) = fresnel.getRayObstacleDifference(m, b, 1, f,
+                              d, A,
+                              pxBaseAntena1, pxBaseAntena2)
+
+colision = fresnel.checkColision(deltaH)
+
+printHeader("Colisiones del Haz: ")
+printHeader("Calculo de Fresnel entre la antena emisora y receptora: ")
+print("Alturas del Haz sobre cada parte del terreno [m]")
+print('\t'+str(alturaHaz))
+print("Radio de Fresnel sobre cada parte del terreno [m]")
+print('\t'+str(radioFresnel))
+print("Diferencia entre la altura del haz y la altura del terreno (junto con el radio de Fresnel)")
+print('\t'+str(deltaH))
+print("Chequeo de colisiones en cada punto del terreno")
+print('\t'+str(colision))
+for i in range(len(colision)):
+    if(colision[i]):
+        print('\tColisión en X = '+str(d[i]) + " Km")
 
 printHeader("Balance de Pontecia: ")
 printSubHeader("\tPerdidas: ")
