@@ -11,6 +11,23 @@ def fresnelRadius(n, d1, d2, f):
     Rn = 548*math.sqrt((n*d1*d2)/(f*(d1+d2)))
     return Rn
 
+def hazEntreAntenas(pyBaseAntena1, hAntena1
+                    pyBaseAntena2, hAntena2
+                    distEntreAntenas):
+
+    # Ecuación de la recta
+    m = ((pyBaseAntena2+hAntena2) - (pyBaseAntena1+hAntena1))/distEntreAntenas
+    b = (pyBaseAntena1+hAntena1)
+    # print("m = "+str(m))
+    # print("b = "+str(b))
+    hazX = []
+    hazY = []
+    for x in range(distEntreAntenas):
+        newY = m*x + b
+        hazX.append(newY)
+        hazY.append(newY)
+    return (hazX,hazY)
+
 # Datos para calcular el radio de Fresnel
 # f = 12770000
 # lambda_ = 300000000/f
