@@ -1,2 +1,2 @@
 # import the necessary modules
-__all__ = ['fresnel','topographic_profile']
+__all__ = ['fresnel','profile', 'losses', 'diffraction']
