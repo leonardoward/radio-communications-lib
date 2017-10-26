@@ -6,21 +6,23 @@ def waveGuide (alpha, largo):
 
 	return largo*alpha/100
 
-def passiveRepeater (f, d1, d2):
+def passiveRepeter (f, d1, d2):
 	# f : frecuencia de la señal en GHz
 	# d1, d2 : distancias hasta y desde la repetidora en Km
 	print("PassiveRepeater: remember that frequency must be in GHz")
 	print("PassiveRepeater: remember that distances must be in Km")
 
-	d = math.sqrt(d1, d2)
-	return = 2*(92.45 + 20*math.log10(f)+20*math.log10(d))
+	d = math.sqrt(d1*d2)
+	return 2*(92.45 + 20*math.log10(f)+20*math.log10(d))
 
-def fullPassisveRepeter (f, pt1, G, d1, d2):
+
+# AUN NO ESTA LISTA
+def fullPassisveRepeter (f, pt, G, distances):
 	# f : frecuencia de la señal en GHz
 	# d1, d2 : distancias hasta y desde la repetidora en Km
 	# pt1 : potencia de transmisión en dB
 	# G : arreglo de ganancias de cada una de las antenas en dB
-	return pt1 + sum(G) - passiveRepeater(f, d1, d2)
+	return pt + sum(G) - passiveRepeater(f, d1, d2)
 
 def diffraction (v):
 	# diffraction losses
