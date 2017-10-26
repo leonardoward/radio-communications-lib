@@ -16,6 +16,7 @@ def passiveRepeter (f, d1, d2):
 	print("\n")
 
 	d = math.sqrt(d1*d2)
+	print(d)
 	return 2*(92.45 + 20*math.log10(f)+20*math.log10(d))
 
 

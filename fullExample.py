@@ -31,7 +31,7 @@ d = [0, 0.5, 1, 1.8, 2.3, 2.6, 3, 5, 7, 37, 37.5]
 A = [25, 75, 100, 210, 250, 170, 125, 20, 0, 0, 25]
 dt = d[-1]
 # distancia hasta la 1era repetidora
-d1 = 2.6
+d1 = 2.3
 # distancia desde la repetidora al final
 d2 = dt-d1
 # potencia de transmisión
@@ -77,8 +77,8 @@ print("\t\tTotal: "+ str(lt))
 print("\t\tWave Guide: "+ str(lg1+lg2))
 print("\t\tPassive Repeter: "+ str(lr1))
 printSubHeader("\tPotencia: ")
-print("\t\tTX: "+str(Ptx))
-print("\t\tRX: "+str(Prx) + " MAX: "+str(Prx_max) + " SENSIBILIDAD: " + str(Srx))
+print("\t\tTx: "+str(Ptx))
+print("\t\tRx: "+str(Prx) + "\tMAX: "+str(Prx_max) + "\tSENSIBILIDAD: " + str(Srx))
 
 
 # OJO!!! siempre dejar esto al final para que no se cierren los gráficos
