@@ -11,18 +11,19 @@ A = [900, 850, 700, 750, 675, 650, 600, 600, 650]
 dt = d[-1]
 # altura de la torre emisora
 h_t1 = 1
-# altura de las repetidoras
-h_tr1 = 0
 # altura de la torre receptora
 h_t2 = 1
 
 f = 15*1000000000           # Frecuencia Hz
 # Ángulo de Reflexión
 beta = 1
-       
+
 R = 1
 # índice troposférico
 k = 0.45
+
+ht = h_t1 + A[0]
+hr = h_t2 + A[-1]
 
 
 # Diferencia de Recorrido
@@ -35,4 +36,4 @@ lambda_ = c/f
 deltaPhase = (4*math.pi*ht*hr)/(lambda_*dt)
 
 # Pérdidas por reflexion
-Lrfx = -10*math.log10(1+math.pow(math.abs(R),2)+2*math.abs(R)*math.cos(beta+deltaPhase))
+Lrfx = -10*math.log10(1+math.pow(math.fabs(R),2)+2*math.fabs(R)*math.cos(beta+deltaPhase))
