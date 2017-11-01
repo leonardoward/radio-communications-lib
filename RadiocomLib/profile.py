@@ -14,7 +14,7 @@ def plotProfileCSV(csv, k):
 
 	distance = data.Distance
 	elevation = data.Elevation
-	
+
 	distance = distance.tolist()
 	elevation = elevation.tolist()
 
@@ -32,7 +32,7 @@ def plotProfileCSV(csv, k):
 	protuberancia1 = B_e(distance_)
 
 	final_elevation = []
-	
+
 	[final_elevation.append(x + y + z) for x, y, z in zip(elevation, protuberancia, protuberancia1)]
 
 	# without index atmospheric
@@ -91,7 +91,7 @@ def plotProfileCSV(csv, k):
 
 	# # Ecuación de la recta
 	# m = (pyAntena2 - pyAntena1)/(pxAntena2 - pxAntena1)
-	# # b = pyAntena1 
+	# # b = pyAntena1
 
 	# # print("m = "+str(m))
 	# # print("b = "+str(b))
@@ -140,7 +140,7 @@ def calcProfileEarthCorrection(distance, elevation):
 	protuberancia1 = B_e(distance)
 
 	final_elevation = []
-	
+
 	[final_elevation.append(x + y) for x, y in zip(elevation, protuberancia1)]
 
 	printHeader("Distance, Elevation")
@@ -162,7 +162,7 @@ def calProfileRefractionCorrection(distance, elevation, k):
 	protuberancia = B_k(distance, k)
 
 	final_elevation = []
-	
+
 	[final_elevation.append(x + y) for x, y in zip(elevation, protuberancia)]
 
 	printHeader("Distance, Elevation")
@@ -182,11 +182,12 @@ def calcProfileFullCorrection(distance, elevation, k):
 	# curvaturas por difracción
 	protuberancia = B_k(distance, k)
 
+
 	# curvaturas por perturbación terrestre
 	protuberancia1 = B_e(distance)
 
 	final_elevation = []
-	
+
 	[final_elevation.append(x + y + z) for x, y, z in zip(elevation, protuberancia, protuberancia1)]
 
 	printHeader("Distance, Elevation")
@@ -210,17 +211,19 @@ def calcSimpleProfileFullCorrection(distance, d1, elevation, k):
 	# curvaturas por difracción
 	b_k = []
 	for x in distance:
-		if (x <= d1): 
+		if (x <= d1):
 			# print(x)
 			b_k.append(0.07849*x*(d1 - x)/k)
 		elif (x > d1):
 			# print(x)
-			b_k.append(0.07849*x*(distance[-1] - x)/k)		
-
+			b_k.append(0.07849*x*(distance[-1] - x)/k)
+	print("Bk")
+	print(b_k)
 	final_elevation = []
 
 	[final_elevation.append(x + y + z) for x, y, z in zip(elevation, protuberancia1, b_k)]
-
+	print("Final Elevation")
+	print(final_elevation)
 	printHeader("Distance, Elevation")
 	[print(str(d) + " , " + str(A)) for d, A in zip(distance, final_elevation)]
 	print("\n")
@@ -251,7 +254,9 @@ def B_k(distance, k):
 	for x in distance:
 		# print(x)
 		b_k.append(0.07849*x*(x_total - x)/k)
-	return b_k; 
+	print("Bk")
+	print(b_k)
+	return b_k;
 
 def B_e(distance):
 	b_e = []
@@ -259,7 +264,9 @@ def B_e(distance):
 	for x in distance:
 		# print(x)
 		b_e.append(0.07849*x*(x_total - x))
-	return b_e; 
+	print("Be")
+	print(b_e)
+	return b_e;
 
 def getMax(values):
 	print(max(values))

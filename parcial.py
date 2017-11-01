@@ -31,9 +31,9 @@ from math import pow
 # velocidad de la luz
 c = 3*pow(10, 8)
 # d en Km
-d = [0, 0.5, 1, 1.8, 2.3, 2.6, 3, 5, 7, 37, 37.5]
+d = [0, 0.5, 2.5, 4, 5, 6, 8]
 # A en m
-A = [25, 75, 100, 210, 250, 170, 125, 20, 0, 0, 25]
+A = [1450, 1260, 1100, 1100, 1400, 1450, 1430]
 # distancia total
 dt = d[-1]
 # distancia hasta la 1era repetidora
@@ -43,28 +43,28 @@ d2 = dt-d1
 # potencia de transmision dB
 Ptx = utils.dBm2dB(20)
 # potencia máxima de recepcion dB
-Prx_max = utils.dBm2dB(-25)
+Prx_max = utils.dBm2dB(-70)
 # sensibilidad del receptor DB
 Srx = utils.dBm2dB(-76)
 # pérdidas en brach dB/estación
 lb = 2
 # altura de la torre emisora
-h_t1 = 90
+h_t1 = 40
 # altura de las repetidoras
 h_tr1 = 0
 # altura de la torre receptora
-h_t2 = 90
+h_t2 = 80
 # frecuencia en GHz
-f = 7
+f = 21
 # OJO: longitud de onda en m
 lambda_m = c/(f*pow(10, 6))
 lambda_Km = utils.m2Km(lambda_m)
 # índice troposférico
-k = 0.45
+k = 0.4
 # pérdidas por 100 metros de guía de onda
-alpha = 2.4
+alpha = 29
 # Ganancia de la antena dBi
-G = 31
+G = 39
 
 # p = profile.calcProfileFullCorrection(d, A, k)
 p1 = profile.calcSimpleProfileFullCorrection(d, d1, A, k)
@@ -90,8 +90,8 @@ ll = losses.lluvia(1.4, dt)
 Pr1 = power.powerReceive(lambda_Km, Ptx, G, G, d1)
 
 # Ganancia total de todas las antenas
-Gt = G + G + G + G
-Lt = lg1 + lg2 + lr1 + 2*lb + ll
+Gt = G
+Lt = lg1 + lg2 + 2*lb + ll
 Prx = Ptx + Gt - Lt
 
 # Cálculo de Fresnel
@@ -109,7 +109,7 @@ hAntena2 = h_t2                   # m
                         pxBaseAntena2, pyBaseAntena2, hAntena2)
 
 # Colisiones entre el haz(incluido fresnel) y los obstáculos
-(alturaHaz, radioFresnel, deltaH) = fresnel.getRayObstacleDifference(m, b, 1, f,
+(alturaHaz, radioFresnel, deltaH) = fresnel.getRayObstacleDifference(m, b, 1, f*1000,
                               d, A,
                               pxBaseAntena1, pxBaseAntena2)
 
