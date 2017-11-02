@@ -171,7 +171,7 @@ def calProfileRefractionCorrection(distance, elevation, k):
 	# return (final_elevation, protuberancia)   # por si las moscas se necesita el valor de la protuberancia
 	return final_elevation
 
-def calcProfileFullCorrection(distance, elevation, k):
+def calcProfileFullCorrection(distance, elevation, k, debug=False):
 	if (len(distance) > len(elevation)):
 		printFail("distancie[] tiene más elementos que elevation[]")
 		sys.exit()
@@ -180,19 +180,21 @@ def calcProfileFullCorrection(distance, elevation, k):
 		sys.exit()
 
 	# curvaturas por difracción
-	protuberancia = B_k(distance, k)
+	protuberancia = B_k(distance, k, debug=debug)
 
 
 	# curvaturas por perturbación terrestre
-	protuberancia1 = B_e(distance)
+	protuberancia1 = B_e(distance, debug=debug)
 
 	final_elevation = []
 
 	[final_elevation.append(x + y + z) for x, y, z in zip(elevation, protuberancia, protuberancia1)]
 
-	printHeader("Distance, Elevation")
-	[print(str(d) + " , " + str(A)) for d, A in zip(distance, final_elevation)]
-	print("\n")
+	if (debug):
+		printHeader("Profile Correction")
+		printHeader("Distance, Elevation")
+		[print(str(round(d, 2)) + " , " + str(round(A ,2))) for d, A in zip(distance, final_elevation)]
+		print("\n")
 
 	# corrección, protuberancia por difracción, protuberancia por curvatura de la tierra
 	# return (final_elevation, protuberancia, protuberancia1)   # por si las moscas se necesita el valor de la protuberancia
@@ -230,7 +232,7 @@ def calcSimpleProfileFullCorrection(distance, d1, elevation, k):
 
 	return final_elevation
 
-def plotProfileArrays(n, distance, elevation, title=""):
+def plotProfileArrays(n, distance, dististance_unit, elevation, elevation_unit, title=""):
 
 	if(title == ""):
 		title = "Topographic Profile"
@@ -240,32 +242,36 @@ def plotProfileArrays(n, distance, elevation, title=""):
 	plt.figure(n)
 	plt.fill_between(distance,0, elevation)
 	plt.title(title)
-	plt.ylabel('Elevation (m)')
-	plt.xlabel('Distance (m)')
+	plt.ylabel('Elevation ('+elevation_unit+')')
+	plt.xlabel('Distance ('+dististance_unit+')')
 	plt.grid(True)
 	plt.draw()
 
 def plotShow():
 	plt.show()
 
-def B_k(distance, k):
+def B_k(distance, k, debug=False):
 	b_k = []
 	x_total = distance[-1]
 	for x in distance:
 		# print(x)
-		b_k.append(0.07849*x*(x_total - x)/k)
-	print("Bk")
-	print(b_k)
+		b_k.append(0.07849*x*(x_total - x)/float(k))
+	if (debug):
+		printHeader("Bk: [m]")
+		[print(str(round(value, 2))+'\t', end=" ") for value in b_k]
+		print('\n')
 	return b_k;
 
-def B_e(distance):
+def B_e(distance, debug=False):
 	b_e = []
 	x_total = distance[-1]
 	for x in distance:
 		# print(x)
 		b_e.append(0.07849*x*(x_total - x))
-	print("Be")
-	print(b_e)
+	if (debug):
+		printHeader("Be: [m]")
+		[print(str(round(value, 2))+'\t', end=" ") for value in b_e]
+		print('\n')
 	return b_e;
 
 def getMax(values):
