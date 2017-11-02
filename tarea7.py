@@ -152,7 +152,6 @@ def main():
 	# Calculamos las pérdidas con ese desfasaje (dB)
 	Lrfx_C = []
 	Lrfx_C.append(-10*math.log10(1+math.pow(Rmod,2)+2*Rmod*math.cos(beta+deltaPhase_C[0])))
-	print(Lrfx_C[-1])
 
 	# Aumentamos la altura de la antena receptora y observamos las pérdidas
 	while(Lrfx_C[-1] < Lrfx[0]):
@@ -197,8 +196,16 @@ def main():
 	#--------------------------------
 	# D)
 	#--------------------------------
+	# De manera cualitativa, ¿qué intuye usted que sucedería si el índice troposférico
+	# variase?
 
-
+	# Observamos que con cambios de centímetros en la altura de la antena receptora
+	# las pérdidas por reflexión cambian bruscamente. Por ejemplo, aumentando 5 cm
+	# las pérdidas van de -5.98 dB a 25.12 dB. Y disminuyendo 4 cm las pérdidas van de
+	# -5.98 dB a 12.01 dB. Intuimos que cualquier pequeño cambio en el índice troposférico
+	# cambiaría con facilidad las pérdidas por reflexion en grán magnitud. Por lo tanto
+	# es necesario proteger contra las pérdidas por reflexión en lugar de incluirlas
+	# en los cálculos.
 
 if __name__ == '__main__':
 	main()
