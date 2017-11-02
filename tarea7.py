@@ -29,10 +29,10 @@ k = 0.45
 #--------------------------------
 # Antenas
 
-# altura de la torre emisora
-h_t1 = 1
-# altura de la torre receptora
-h_t2 = 1
+# altura de la torre emisora (m)
+h_t1 = 15
+# altura de la torre receptora(m)
+h_t2 = 15
 
 ht = h_t1 + A[0]
 hr = h_t2 + A[-1]
@@ -46,14 +46,14 @@ f = 15*pow(10,6)
 lambda_ = c/f
 
 # Ángulo de Reflexión
-beta = 1
+beta = math.pi
 
-R = -1
+Rmod = 1
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser(
 	description='Script to calculate reflexion in a communications system',
-	epilog='''Example usage: 
+	epilog='''Example usage:
 		python3 tarea7.py -k 0.4 -f 15''')
 ap.add_argument("-k", "--atmospheric-index", help="Set atmospheric index to profile corrections", default=k)
 ap.add_argument("-f", "--frequency", help="Set signal frequency in MHz", default=f)
@@ -94,7 +94,7 @@ def main():
 	deltaPhase = (4*math.pi*ht*hr)/(lambda_*dt)
 
 	# Pérdidas por reflexion
-	Lrfx = -10*math.log10(1+math.pow(math.fabs(R),2)+2*math.fabs(R)*math.cos(beta+deltaPhase))
+	Lrfx = -10*math.log10(1+math.pow(Rmod,2)+2*Rmod*math.cos(beta+deltaPhase))
 
 	if (debug):
 		printHeader('Reflection Losses')
