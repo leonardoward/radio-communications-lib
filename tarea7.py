@@ -113,11 +113,12 @@ def main():
 		plt.draw()
 
 	if (debug):
-		printHeader('Reflection Losses')
+		printHeader('Reflection Losses for differente Phase Shifts')
 		print("Phase Shift(deg)\tReflection Loss(dB)")
 		for i in range(len(deltaPhaseDeg)):
 			print(str(deltaPhaseDeg[i])+"°\t"+str(Lrfx[i])+" dB")
-
+		print()
+		print()
 		# print('Phase difference: '+str(round(deltaPhase, 2))+' m')
 		# print('Losses: '+str(round(Lrfx, 2))+' dB')
 
@@ -126,18 +127,76 @@ def main():
 	# C)
 	#--------------------------------
 
+	# Fije las antenas a 15 m de altura sobre el nivel de terreno, y desplace levemente
+	# una de ellas para obtener los desfasajes anteriores. Calcule el desfasaje entre el
+	# rayo directo y el reflejado si la otra antena también se ubica a 15 m sobre el nivel
+	# de terreno. Varíe la altura de una de las antenas alrededor del valor indicado para
+	# provocar las variaciones indicadas para el desfasaje.
+
+	# altura de la torre emisora (m)
+	h_t1 = 15
+	# altura de la torre receptora(m)
+	h_t2 = 15
+
+	ht = h_t1 + A[0]
+
+	hr = []
+	hr.append(h_t2 + A[-1])
+
+	# Calculamos el desfasaje para antenas con esa altura
+
 	# Diferencia de fase (rad)
-	# deltaPhase = (4*math.pi*ht*hr)/(lambda_*dt)
+	deltaPhase_C = []
+	deltaPhase_C.append((4*math.pi*ht*hr[-1])/(lambda_*dt))
+
+	# Calculamos las pérdidas con ese desfasaje (dB)
+	Lrfx_C = []
+	Lrfx_C.append(-10*math.log10(1+math.pow(Rmod,2)+2*Rmod*math.cos(beta+deltaPhase_C[0])))
+	print(Lrfx_C[-1])
+
+	# Aumentamos la altura de la antena receptora y observamos las pérdidas
+	while(Lrfx_C[-1] < Lrfx[0]):
+		hr.append(hr[-1] - 0.01)
+		deltaPhase_C.append((4*math.pi*ht*hr[-1])/(lambda_*dt))
+		aux = 1+math.pow(Rmod,2)+2*Rmod*math.cos(beta+deltaPhase_C[-1])
+		Lrfx_C.append(-10*math.log10(1+math.pow(Rmod,2)+2*Rmod*math.cos(beta+deltaPhase_C[-1])))
+		if(Lrfx_C[-1] < Lrfx_C[-2]):
+			break
+
+	# Invertimos el arreglo para colocar las alturas de menor a mayor
+	hr = hr[::-1]
+	deltaPhase_C = deltaPhase_C[::-1]
+	Lrfx_C = Lrfx_C[::-1]
+
+	# Disminuimos la altura de la antena receptora y observamos las pérdidas
+	while(Lrfx_C[-1] < Lrfx[0]):
+		hr.append(hr[-1] + 0.01)
+		deltaPhase_C.append((4*math.pi*ht*hr[-1])/(lambda_*dt))
+		aux = 1+math.pow(Rmod,2)+2*Rmod*math.cos(beta+deltaPhase_C[-1])
+		Lrfx_C.append(-10*math.log10(1+math.pow(Rmod,2)+2*Rmod*math.cos(beta+deltaPhase_C[-1])))
+		if(Lrfx_C[-1] < Lrfx_C[-2]):
+			break
+
+	if(plot):
+		plt.figure()
+		plt.fill_between(hr,0, Lrfx_C)
+		plt.title("Reflexion losses changing receiver antenna's height (Question C)")
+		plt.ylabel('Losses (dB)')
+		plt.xlabel('Height (m)')
+		plt.grid(True)
+		plt.draw()
+
+	if (debug):
+		printHeader("Reflection Losses changing the receiver antenna's height")
+		print("Receiver Antenna's Height(m)\tReflection Loss(dB)")
+		for i in range(len(hr)):
+			print(str(hr[i])+" m\t"+str(Lrfx_C[i])+" dB")
+		print()
+		print()
 
 	#--------------------------------
 	# D)
 	#--------------------------------
-
-	# Diferencia de Recorrido
-	TPR = math.sqrt(math.pow(dt,2)+math.pow(ht+hr,2))
-	TR = math.sqrt(math.pow(dt,2)+math.pow(ht-hr,2))
-	deltaL = TPR - TR
-
 
 
 
