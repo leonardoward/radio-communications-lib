@@ -1,5 +1,6 @@
 import argparse
 import math
+import matplotlib.pyplot as plt
 from printColors import printHeader, printSubHeader, printWarning, printOK, printFail
 from RadiocomLib import profile
 
@@ -90,21 +91,43 @@ def main():
 	# B)
 	#--------------------------------
 
-	# Diferencia de fase (rad)
-	deltaPhase = (4*math.pi*ht*hr)/(lambda_*dt)
+	# Creamos un arreglo para todos los valores del desfasaje al que le queremos
+	# calcular las pérdidas
+	deltaPhaseDeg = [0.001, 20, 45, 60, 90, 180, 270, 300, 340, 359.99]
+	deltaPhaseRad = []
+	for i in range(len(deltaPhaseDeg)):
+		deltaPhaseRad.append(math.radians(deltaPhaseDeg[i]))
 
-	# Pérdidas por reflexion
-	Lrfx = -10*math.log10(1+math.pow(Rmod,2)+2*Rmod*math.cos(beta+deltaPhase))
+	# Calculamos las Pérdidas por reflexion para cada defasaje
+	Lrfx = []
+	for i in range(len(deltaPhaseRad)):
+		Lrfx.append(-10*math.log10(1+math.pow(Rmod,2)+2*Rmod*math.cos(beta+deltaPhaseRad[i])))
+
+	if(plot):
+		plt.figure()
+		plt.fill_between(deltaPhaseDeg,0, Lrfx)
+		plt.title("Reflexion losses for different phase shifts (Question B)")
+		plt.ylabel('Losses (dB)')
+		plt.xlabel('Phase Shift (deg)')
+		plt.grid(True)
+		plt.draw()
 
 	if (debug):
 		printHeader('Reflection Losses')
-		print('Phase difference: '+str(round(deltaPhase, 2))+' m')
-		print('Losses: '+str(round(Lrfx, 2))+' dB')
+		print("Phase Shift(deg)\tReflection Loss(dB)")
+		for i in range(len(deltaPhaseDeg)):
+			print(str(deltaPhaseDeg[i])+"°\t"+str(Lrfx[i])+" dB")
+
+		# print('Phase difference: '+str(round(deltaPhase, 2))+' m')
+		# print('Losses: '+str(round(Lrfx, 2))+' dB')
 
 
 	#--------------------------------
 	# C)
 	#--------------------------------
+
+	# Diferencia de fase (rad)
+	# deltaPhase = (4*math.pi*ht*hr)/(lambda_*dt)
 
 	#--------------------------------
 	# D)
